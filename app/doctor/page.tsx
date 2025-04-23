@@ -40,9 +40,10 @@ export default function DoctorDashboard() {
   }, [router])
 
   const handleLogout = () => {
-    localStorage.removeItem("userAddress")
-    localStorage.removeItem("userRole")
-    localStorage.removeItem("userName")
+    // Clear all local storage items
+    localStorage.clear()
+
+    // Redirect to login page
     router.push("/login")
   }
 
@@ -62,8 +63,8 @@ export default function DoctorDashboard() {
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-3 font-bold text-xl">
-            <img src="/images/medbloc-logo.png" alt="MedBloc Logo" className="h-10 w-auto" />
-            <span>MedBloc</span>
+            <img src="/images/ehr-logo.svg" alt="EHR Logo" className="h-10 w-auto" />
+            <span>EHR</span>
           </div>
           <nav className="hidden md:flex gap-6">
             <Link href="/doctor" className="text-sm font-medium transition-colors hover:text-primary">

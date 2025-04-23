@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft, Loader2 } from "lucide-react"
+import { ArrowLeft, Loader2, AlertCircle } from "lucide-react"
 import { connectWallet, checkRegistration } from "@/lib/blockchain"
 
 export default function LoginPage() {
@@ -18,9 +18,19 @@ export default function LoginPage() {
     setError("")
 
     try {
-      const address = await connectWallet()
+      // Force MetaMask to show the account selection modal
+      if (typeof window.ethereum !== "undefined") {
+        await window.ethereum.request({
+          method: "wallet_requestPermissions",
+          params: [{ eth_accounts: {} }],
+        })
+      }
 
-      // Check if the address is registered directly using our blockchain function
+      // Now connect the wallet
+      const address = await connectWallet()
+      console.log("Connected wallet address:", address)
+
+      // Check if the address is registered
       const registrationStatus = await checkRegistration(address)
 
       if (!registrationStatus.isRegistered) {
@@ -29,7 +39,7 @@ export default function LoginPage() {
         return
       }
 
-      // For demo purposes, we'll use local storage to simulate authentication
+      // Store user data in local storage
       localStorage.setItem("userAddress", address)
       localStorage.setItem("userRole", registrationStatus.role)
       localStorage.setItem("userName", registrationStatus.name)
@@ -42,12 +52,12 @@ export default function LoginPage() {
       } else if (registrationStatus.role === "admin") {
         router.push("/admin")
       } else {
-        // If not registered, redirect to registration
+        // If role is unknown, redirect to registration
         router.push("/register")
       }
     } catch (error) {
       console.error("Login error:", error)
-      setError("Failed to connect wallet. Please try again.")
+      setError("Failed to connect wallet. Please make sure MetaMask is installed and unlocked.")
     } finally {
       setLoading(false)
     }
@@ -66,17 +76,18 @@ export default function LoginPage() {
             </Link>
           </div>
           <div className="flex items-center gap-3 mb-4">
-            <img src="/images/medbloc-logo.png" alt="MedBloc Logo" className="h-10 w-auto" />
+            <img src="/images/ehr-logo.svg" alt="EHR Logo" className="h-10 w-auto" />
             <CardTitle className="text-2xl">Login</CardTitle>
           </div>
-          <CardDescription>Connect your wallet to access your MedBloc account</CardDescription>
+          <CardDescription>Connect your wallet to access your EHR account</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center py-6 space-y-4">
           <p className="text-center text-muted-foreground mb-4">
             Connect your Ethereum wallet to securely access your medical records and appointments.
           </p>
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg w-full">
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg w-full flex items-start">
+              <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
               <p className="text-sm">{error}</p>
             </div>
           )}

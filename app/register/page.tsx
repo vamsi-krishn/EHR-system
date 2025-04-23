@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ArrowLeft, CheckCircle2, Loader2 } from "lucide-react"
+import { ArrowLeft, CheckCircle2, Loader2, AlertCircle } from "lucide-react"
 import { connectWallet, registerPatient, registerDoctor } from "@/lib/blockchain"
 
 export default function RegisterPage() {
@@ -20,6 +20,7 @@ export default function RegisterPage() {
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [registered, setRegistered] = useState(false)
+  const [error, setError] = useState("")
   const [patientData, setPatientData] = useState({
     name: "",
     dateOfBirth: "",
@@ -37,25 +38,29 @@ export default function RegisterPage() {
 
   // Check if user is already logged in
   useEffect(() => {
-    const userAddress = localStorage.getItem("userAddress")
-    const userRole = localStorage.getItem("userRole")
-
-    if (userAddress && userRole) {
-      // Redirect based on role
-      if (userRole === "patient") {
-        router.push("/patient")
-      } else if (userRole === "doctor") {
-        router.push("/doctor")
-      } else if (userRole === "admin") {
-        router.push("/admin")
-      }
-    }
-  }, [router])
+    // Clear any existing session data to ensure a fresh registration
+    localStorage.removeItem("userAddress")
+    localStorage.removeItem("userRole")
+    localStorage.removeItem("userName")
+  }, [])
 
   const handleConnect = async () => {
     setLoading(true)
+    setError("")
+
     try {
+      // Force MetaMask to show the account selection modal
+      if (typeof window.ethereum !== "undefined") {
+        await window.ethereum.request({
+          method: "wallet_requestPermissions",
+          params: [{ eth_accounts: {} }],
+        })
+      }
+
+      // Now connect the wallet
       const address = await connectWallet()
+      console.log("Connected wallet address for registration:", address)
+
       if (activeTab === "patient") {
         setPatientData({ ...patientData, walletAddress: address })
       } else {
@@ -64,6 +69,7 @@ export default function RegisterPage() {
       setStep(2)
     } catch (error) {
       console.error("Failed to connect wallet:", error)
+      setError("Failed to connect wallet. Please make sure MetaMask is installed and unlocked.")
     } finally {
       setLoading(false)
     }
@@ -72,8 +78,19 @@ export default function RegisterPage() {
   const handleRegisterPatient = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setError("")
 
     try {
+      // Verify the wallet is still connected
+      const currentAddress = await connectWallet()
+
+      // Check if the connected wallet matches the one in the form
+      if (currentAddress.toLowerCase() !== patientData.walletAddress.toLowerCase()) {
+        setError("Wallet address has changed. Please reconnect your wallet.")
+        setLoading(false)
+        return
+      }
+
       await registerPatient(patientData)
 
       // Store user data in local storage for immediate login
@@ -84,6 +101,7 @@ export default function RegisterPage() {
       setRegistered(true)
     } catch (error) {
       console.error("Error registering patient:", error)
+      setError("Registration failed. Please try again.")
     } finally {
       setLoading(false)
     }
@@ -92,8 +110,19 @@ export default function RegisterPage() {
   const handleRegisterDoctor = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setError("")
 
     try {
+      // Verify the wallet is still connected
+      const currentAddress = await connectWallet()
+
+      // Check if the connected wallet matches the one in the form
+      if (currentAddress.toLowerCase() !== doctorData.walletAddress.toLowerCase()) {
+        setError("Wallet address has changed. Please reconnect your wallet.")
+        setLoading(false)
+        return
+      }
+
       await registerDoctor(doctorData)
 
       // Store user data in local storage for immediate login
@@ -104,6 +133,7 @@ export default function RegisterPage() {
       setRegistered(true)
     } catch (error) {
       console.error("Error registering doctor:", error)
+      setError("Registration failed. Please try again.")
     } finally {
       setLoading(false)
     }
@@ -131,10 +161,10 @@ export default function RegisterPage() {
             </Link>
           </div>
           <div className="flex items-center gap-3 mb-4">
-            <img src="/images/medbloc-logo.png" alt="MedBloc Logo" className="h-10 w-auto" />
+            <img src="/images/ehr-logo.svg" alt="EHR Logo" className="h-10 w-auto" />
             <CardTitle className="text-2xl">Register</CardTitle>
           </div>
-          <CardDescription>Create a new account to use MedBloc</CardDescription>
+          <CardDescription>Create a new account to use EHR</CardDescription>
         </CardHeader>
         <CardContent>
           {registered ? (
@@ -142,7 +172,7 @@ export default function RegisterPage() {
               <CheckCircle2 className="h-16 w-16 text-teal-500 mb-4" />
               <h3 className="text-xl font-bold">Registration Successful!</h3>
               <p className="text-muted-foreground mt-2 mb-6">
-                You are now registered with MedBloc. You can now access your dashboard.
+                You are now registered with EHR. You can now access your dashboard.
               </p>
               <Button onClick={handleContinueToDashboard}>Go to Dashboard</Button>
             </div>
@@ -167,6 +197,12 @@ export default function RegisterPage() {
               <p className="text-sm text-center mb-2">
                 Connect your Ethereum wallet to register. This wallet will be used to securely identify you.
               </p>
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg w-full flex items-start">
+                  <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <p className="text-sm">{error}</p>
+                </div>
+              )}
               <Button onClick={handleConnect} disabled={loading} className="w-full">
                 {loading ? (
                   <>
@@ -232,6 +268,12 @@ export default function RegisterPage() {
                 <Label htmlFor="walletAddress">Wallet Address</Label>
                 <Input id="walletAddress" value={patientData.walletAddress} readOnly className="bg-muted" />
               </div>
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg w-full flex items-start">
+                  <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <p className="text-sm">{error}</p>
+                </div>
+              )}
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? (
                   <>
@@ -301,6 +343,12 @@ export default function RegisterPage() {
                 <Label htmlFor="doctorWalletAddress">Wallet Address</Label>
                 <Input id="doctorWalletAddress" value={doctorData.walletAddress} readOnly className="bg-muted" />
               </div>
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg w-full flex items-start">
+                  <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+                  <p className="text-sm">{error}</p>
+                </div>
+              )}
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? (
                   <>
@@ -316,7 +364,7 @@ export default function RegisterPage() {
         </CardContent>
         <CardFooter className="flex justify-center border-t pt-4">
           <p className="text-xs text-muted-foreground text-center">
-            By registering, you agree to the terms and conditions of the MedBloc platform.
+            By registering, you agree to the terms and conditions of the EHR platform.
           </p>
         </CardFooter>
       </Card>

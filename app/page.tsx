@@ -9,8 +9,8 @@ export default function Home() {
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-3 font-bold text-xl">
-            <img src="/images/medbloc-logo.png" alt="MedBloc Logo" className="h-10 w-auto" />
-            <span>MedBloc</span>
+            <img src="/images/ehr-logo.svg" alt="EHR Logo" className="h-10 w-auto" />
+            <span>EHR</span>
           </div>
           <nav className="hidden md:flex gap-6">
             <Link href="/" className="text-sm font-medium transition-colors hover:text-primary">
@@ -45,7 +45,7 @@ export default function Home() {
               <div className="flex flex-col justify-center space-y-4">
                 <div className="space-y-2">
                   <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                    MedBloc: Secure Medical Records on Blockchain
+                    EHR: Secure Medical Records on Blockchain
                   </h1>
                   <p className="max-w-[600px] text-muted-foreground md:text-xl">
                     Patient-controlled electronic health records with secure access management and complete privacy.
@@ -206,7 +206,7 @@ export default function Home() {
       <footer className="w-full border-t py-6">
         <div className="container flex flex-col items-center justify-between gap-4 md:flex-row">
           <p className="text-center text-sm text-muted-foreground md:text-left">
-            &copy; {new Date().getFullYear()} MedBloc. All rights reserved.
+            &copy; {new Date().getFullYear()} EHR. All rights reserved.
           </p>
           <div className="flex gap-4">
             <Link href="/terms" className="text-sm text-muted-foreground hover:underline">

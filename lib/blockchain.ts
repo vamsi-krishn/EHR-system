@@ -152,8 +152,13 @@ export const connectWallet = async () => {
       throw new Error("MetaMask is not installed. Please install MetaMask to use this application.")
     }
 
-    // Request account access
-    const accounts = await window.ethereum.request({ method: "eth_requestAccounts" })
+    // Request account access - this will prompt the user to select an account if they have multiple
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts",
+      params: [],
+    })
+
+    // Always return the first account in the array
     return accounts[0]
   } catch (error) {
     console.error("Error connecting to wallet:", error)
