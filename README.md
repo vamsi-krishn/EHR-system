@@ -1,44 +1,84 @@
-Website live at:
-https://v0-blockchain-voting-system-liart.vercel.app/
-# 🏥 EHR: Secure Medical Records on Blockchain
+# EHR - Blockchain Medical Record
 
-> Patient-controlled electronic health records with secure access management and complete privacy.
+EHR is a secure, transparent blockchain-based medical record system. The system leverages Ethereum blockchain technology to ensure tamper-proof medical records, patient-controlled access, and complete auditability.
 
-## 🚀 Overview
+## Features
 
-**EHR: Secure Medical Records on Blockchain** is a decentralized platform that enables patients to control their own electronic health records (EHRs). Leveraging the power of blockchain technology, this system ensures data integrity, privacy, and fine-grained access management.
+- **Secure Authentication**: Wallet-based authentication with patient and doctor verification
+- **Patient-Controlled Access**: Patients control which healthcare providers can access their records
+- **Transparent Records**: All medical records are securely stored on the blockchain for integrity
+- **Appointment Booking**: Schedule and manage appointments with healthcare providers
+- **Doctor Dashboard**: Comprehensive tools for patient management
+- **Mobile Responsive**: Works on all devices for maximum accessibility
 
-Patients have full ownership of their records and can securely grant or revoke access to healthcare providers, insurance companies, or researchers as needed.
+## Technology Stack
 
----
+- **Frontend**: Next.js, React, Tailwind CSS
+- **Blockchain**: Ethereum (Solidity)
+- **Integration**: ethers.js
+- **Deployment**: Vercel
 
-## 🔐 Key Features
-
-- ✅ **Patient-Controlled Access**: Patients decide who sees their health data.
-- 🔗 **Blockchain-Backed Security**: Immutable and tamper-proof records stored securely.
-- 🕵️‍♀️ **End-to-End Privacy**: All health records are encrypted; only authorized users can decrypt them.
-- 📋 **Audit Trails**: Transparent logs of all record access and modifications.
-- 📱 **Web3 Integration**: Use of digital wallets for authentication and transaction signing.
-- 🌐 **Interoperability**: Designed to integrate with existing EHR systems and standards (e.g., HL7, FHIR).
-
----
-
-## 🧱 Tech Stack
-
-- **Blockchain**: Ethereum / Polygon / Hyperledger Fabric (customizable)
-- **Smart Contracts**: Solidity
-- **Frontend**: React.js
-- **Backend**: Node.js + Express
-- **Database**: IPFS (InterPlanetary File System) for storing encrypted records
-- **Authentication**: MetaMask / WalletConnect
-- **Encryption**: AES / RSA / Zero-Knowledge Proofs (ZKPs)
-
----
-
-## ⚙️ Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- Node.js (v16+)
-- MetaMask Wallet (browser extension)
-- Truffle / Hardhat (for smart contract deployment)
+- Node.js (v16 or later)
+- npm or yarn
+- MetaMask or another Ethereum wallet
+
+### Installation
+
+1. Clone the repository:
+   \`\`\`bash
+   git clone https://github.com/your-username/ehr-blockchain.git
+   cd ehr-blockchain
+   \`\`\`
+
+2. Install dependencies:
+   \`\`\`bash
+   npm install
+   # or
+   yarn
+   \`\`\`
+
+3. Run the development server:
+   \`\`\`bash
+   npm run dev
+   # or
+   yarn dev
+   \`\`\`
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Usage
+
+### For Patients
+
+1. Register with your Ethereum wallet
+2. Manage your medical records
+3. Control doctor access permissions
+4. Book appointments with healthcare providers
+
+### For Doctors
+
+1. Register with your medical credentials and Ethereum wallet
+2. Access patient records (with permission)
+3. Upload and manage medical documents
+4. Manage patient appointments
+
+## Deployment
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgements
+
+- Ethereum Foundation
+- Next.js Team
